@@ -6,7 +6,8 @@ const JournalPreview = ({ journalUrl, htmlContent }) => {
       return (
         <iframe 
           src={journalUrl}
-          className="preview-frame" 
+          className="preview-frame preview-frame-hover w-full border border-gray-300 rounded-md mt-2 transition-all duration-200 ease-in-out" 
+          style={{ height: '600px' }}
           title="Journal Preview"
         />
       );
@@ -16,21 +17,22 @@ const JournalPreview = ({ journalUrl, htmlContent }) => {
       return (
         <iframe 
           src={blobUrl}
-          className="preview-frame" 
+          className="preview-frame preview-frame-hover w-full border border-gray-300 rounded-md mt-2 transition-all duration-200 ease-in-out" 
+          style={{ height: '600px' }}
           title="Journal Preview"
         />
       );
     } else {
-      return <p>Pratinjau tidak tersedia</p>;
+      return <p className="text-gray-500">Pratinjau tidak tersedia</p>;
     }
   };
 
   return (
-    <div className="card mb-4 fade-in">
-      <div className="card-header">
+    <div className="rounded-lg bg-white mb-8 transition-all duration-300 ease-in-out shadow-lg border border-gray-100 card-hover-enhanced opacity-0 animate-fadeIn">
+      <div className="card-header px-6 py-4 text-white rounded-t-lg">
         <i className="bi bi-globe me-2"></i>Pratinjau Website Jurnal
       </div>
-      <div className="card-body">
+      <div className="p-6">
         {renderPreview()}
       </div>
     </div>

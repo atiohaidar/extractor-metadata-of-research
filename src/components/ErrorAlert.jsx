@@ -15,15 +15,17 @@ const ErrorAlert = ({ error, onClose }) => {
   if (!error) return null;
 
   return (
-    <div className="alert alert-danger mt-3" ref={errorRef} id="error-container">
+    <div className="p-4 mb-4 rounded-lg border bg-red-50 border-red-200 text-red-800 mt-3 relative" ref={errorRef} id="error-container">
       <span id="error-message">{error}</span>
       {onClose && (
         <button 
           type="button" 
-          className="btn-close ms-2" 
+          className="absolute top-2 right-2 w-6 h-6 opacity-50 hover:opacity-75 cursor-pointer border-0 bg-transparent text-red-600 hover:text-red-800 transition-opacity duration-200" 
           onClick={onClose}
           aria-label="Close"
-        ></button>
+        >
+          ×
+        </button>
       )}
     </div>
   );

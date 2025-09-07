@@ -1,12 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MetadataTable from './MetadataTable';
 import SintaCard from './SintaCard';
 import ScimagoCard from './ScimagoCard';
 import AdditionalInfo from './AdditionalInfo';
 import JournalPreview from './JournalPreview';
+import InfoAlert from './InfoAlert';
 
 const ResultsContainer = ({ data }) => {
   const resultsRef = useRef(null);
+  const [dismissedAlerts, setDismissedAlerts] = useState({
+    citation: false,
+    wayback: false
+  });
 
   // Auto-scroll to results when data is loaded (like original HTML)
   useEffect(() => {
@@ -18,32 +23,55 @@ const ResultsContainer = ({ data }) => {
     }
   }, [data]);
 
+  // Reset dismissed alerts when new data loads
+  useEffect(() => {
+    if (data) {
+      setDismissedAlerts({
+        citation: false,
+        wayback: false
+      });
+    }
+  }, [data]);
+
+  const handleDismissAlert = (alertType) => {
+    setDismissedAlerts(prev => ({
+      ...prev,
+      [alertType]: true
+    }));
+  };
+
   if (!data) return null;
 
   const { metadata, journal_url, html_content } = data;
 
-  const showCitationNotice = metadata.metadata_source === 'citation';
-  const showWaybackNotice = metadata.wayback_url;
+  const showCitationNotice = metadata.metadata_source === 'citation' && !dismissedAlerts.citation;
+  const showWaybackNotice = metadata.wayback_url && !dismissedAlerts.wayback;
 
   return (
-    <div className="fade-in" ref={resultsRef} id="results-container">
+    <div className="transition-opacity duration-300 ease-in-out" ref={resultsRef} id="results-container">
       {/* Citation Notice */}
       {showCitationNotice && (
-        <div className="alert alert-info mb-4">
-          <i className="bi bi-info-circle me-2"></i>
+        <InfoAlert 
+          type="info" 
+          icon="bi bi-info-circle"
+          onClose={() => handleDismissAlert('citation')}
+        >
           <strong>Sumber Metadata:</strong> Metadata ini diekstrak dari meta tag citation karena metadata Dublin Core tidak tersedia.
-        </div>
+        </InfoAlert>
       )}
       
       {/* Wayback Notice */}
       {showWaybackNotice && (
-        <div className="alert alert-warning mb-4">
-          <i className="bi bi-clock-history me-2"></i>
+        <InfoAlert 
+          type="warning" 
+          icon="bi bi-clock-history"
+          onClose={() => handleDismissAlert('wayback')}
+        >
           <strong>Pemberitahuan Arsip:</strong> {metadata.note}
-          <a href={metadata.wayback_url} target="_blank" rel="noopener noreferrer" className="alert-link ms-2">
+          <a href={metadata.wayback_url} target="_blank" rel="noopener noreferrer" className="text-yellow-900 underline hover:text-yellow-700 ms-2">
             Lihat versi arsip
           </a>
-        </div>
+        </InfoAlert>
       )}
       
       {/* Main Metadata Card */}

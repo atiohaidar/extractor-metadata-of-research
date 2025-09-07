@@ -14,6 +14,7 @@ export const useJournalExtractor = () => {
   const extractFromUrl = useCallback(async (url) => {
     setLoading(true);
     setError(null);
+    setResults(null); // Clear previous results immediately
     
     try {
       const normalizedUrl = normalizeUrl(url);
@@ -30,6 +31,7 @@ export const useJournalExtractor = () => {
   const extractFromHtml = useCallback(async (htmlContent, displayUrl = '') => {
     setLoading(true);
     setError(null);
+    setResults(null); // Clear previous results immediately
     
     try {
       const data = await extractMetadata('html', { 

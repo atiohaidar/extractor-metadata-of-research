@@ -21,12 +21,12 @@ const MetadataTable = ({ metadata }) => {
             href={value.url} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="btn btn-sm btn-outline-primary mb-2"
+            className="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors duration-200 mb-2"
           >
-            <i className="bi bi-link-45deg"></i> {value.text}
+            <i className="bi bi-link-45deg me-1"></i> {value.text}
           </a>
-          <div className="text-break">
-            <small className="text-muted">{value.url}</small>
+          <div className="break-words">
+            <small className="text-gray-500 text-sm">{value.url}</small>
           </div>
         </>
       );
@@ -38,21 +38,21 @@ const MetadataTable = ({ metadata }) => {
         return (
           <div>
             {sources.map((src, index) => (
-              <div key={index} className="d-flex align-items-center flex-wrap mb-2">
+              <div key={index} className="flex items-center flex-wrap mb-2">
                 <span className="me-2">{escapeHtml(src)}</span>
                 <CopyButton 
                   text={src}
                   buttonId={`source-${index}`}
-                  className="btn btn-sm btn-outline-secondary me-2"
+                  className="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 transition-colors duration-200 me-2"
                   ariaLabel="Salin sumber"
                 />
                 <a 
-                  className="btn btn-sm btn-outline-secondary" 
+                  className="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 transition-colors duration-200" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   href={generateSearchUrl(src)}
                 >
-                  <i className="bi bi-search"></i> Cari Sinta dan Scimago di Google
+                  <i className="bi bi-search me-1"></i> Cari Sinta dan Scimago di Google
                 </a>
               </div>
             ))}
@@ -65,12 +65,12 @@ const MetadataTable = ({ metadata }) => {
     
     if (field.key === 'title') {
       return (
-        <div className="d-flex align-items-center flex-wrap">
+        <div className="flex items-center flex-wrap">
           <span className="me-2">{escapeHtml(value)}</span>
           <CopyButton 
             text={value}
             buttonId="title"
-            className="btn btn-sm btn-outline-secondary"
+            className="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 transition-colors duration-200"
             ariaLabel="Salin judul"
           />
         </div>
@@ -81,39 +81,41 @@ const MetadataTable = ({ metadata }) => {
   };
 
   return (
-    <div className="card mb-4 fade-in">
-      <div className="card-header">
+    <div className="rounded-lg bg-white mb-8 transition-all duration-300 ease-in-out shadow-lg border border-gray-100 card-hover-enhanced opacity-0 animate-fadeIn">
+      <div className="card-header px-6 py-4 text-white rounded-t-lg">
         <i className="bi bi-info-circle-fill me-2"></i>Metadata Jurnal
       </div>
-      <div className="card-body">
-        <table className="table table-striped" id="metadata-table">
-          <tbody id="metadata-tbody">
-            {priorityFields.map(field => {
-              if (metadata[field.key]) {
-                return (
-                  <tr key={field.key}>
-                    <th scope="row" style={{ width: '20%' }}>{field.label}</th>
-                    <td>{renderFieldValue(field, metadata[field.key])}</td>
-                  </tr>
-                );
-              }
-              return null;
-            })}
-            
-            {Object.keys(metadata).map(key => {
-              if (key.startsWith('date_')) {
-                const dateLabel = key.replace('date_', '').charAt(0).toUpperCase() + key.replace('date_', '').slice(1);
-                return (
-                  <tr key={key}>
-                    <th scope="row" style={{ width: '20%' }}>{dateLabel} Date</th>
-                    <td>{metadata[key]}</td>
-                  </tr>
-                );
-              }
-              return null;
-            })}
-          </tbody>
-        </table>
+      <div className="p-6">
+        <div className="w-full overflow-x-auto">
+          <table className="w-full table-auto border-collapse" id="metadata-table">
+            <tbody id="metadata-tbody" className="divide-y divide-gray-200">
+              {priorityFields.map(field => {
+                if (metadata[field.key]) {
+                  return (
+                    <tr key={field.key} className="transition-all duration-300 ease-in-out table-row-hover">
+                      <th scope="row" className="p-3 text-left font-medium text-gray-900 bg-gray-50 align-top w-1/5">{field.label}</th>
+                      <td className="p-3 align-top">{renderFieldValue(field, metadata[field.key])}</td>
+                    </tr>
+                  );
+                }
+                return null;
+              })}
+              
+              {Object.keys(metadata).map(key => {
+                if (key.startsWith('date_')) {
+                  const dateLabel = key.replace('date_', '').charAt(0).toUpperCase() + key.replace('date_', '').slice(1);
+                  return (
+                    <tr key={key} className="transition-all duration-300 ease-in-out table-row-hover">
+                      <th scope="row" className="p-3 text-left font-medium text-gray-900 bg-gray-50 align-top w-1/5">{dateLabel} Date</th>
+                      <td className="p-3 align-top">{metadata[key]}</td>
+                    </tr>
+                  );
+                }
+                return null;
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

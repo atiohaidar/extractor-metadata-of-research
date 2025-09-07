@@ -10,6 +10,12 @@ const SintaCard = ({ metadata }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // Reset state when metadata changes
+    setVisible(false);
+    setLoading(false);
+    setError(null);
+    setSintaData(null);
+
     const loadSintaInfo = async () => {
       if (!metadata || !metadata.sinta_link || !metadata.sinta_link.url) return;
 
@@ -37,7 +43,7 @@ const SintaCard = ({ metadata }) => {
 
   const renderAccreditationHistory = () => {
     if (!sintaData || !sintaData.accreditation_history) {
-      return <span className="text-muted">No data</span>;
+      return <span className="text-gray-500">No data</span>;
     }
 
     const hist = sintaData.accreditation_history;
@@ -45,7 +51,7 @@ const SintaCard = ({ metadata }) => {
     const pubYears = extractPublicationYears(metadata);
 
     if (years.length === 0) {
-      return <span className="text-muted">No data</span>;
+      return <span className="text-gray-500">No data</span>;
     }
 
     return (
@@ -58,7 +64,11 @@ const SintaCard = ({ metadata }) => {
           return (
             <span 
               key={year} 
-              className={`badge rounded-pill ${matched ? 'text-bg-success' : 'text-bg-secondary'} me-2 mb-2`}
+              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full me-2 mb-2 ${
+                matched 
+                  ? 'bg-green-100 text-green-800' 
+                  : 'bg-gray-100 text-gray-800'
+              }`}
             >
               {year}: {level}
             </span>
@@ -69,20 +79,20 @@ const SintaCard = ({ metadata }) => {
   };
 
   return (
-    <div className="card mb-4 fade-in">
-      <div className="card-header">
+    <div className="rounded-lg bg-white mb-8 transition-all duration-300 ease-in-out shadow-lg border border-gray-100 card-hover-enhanced opacity-0 animate-fadeIn">
+      <div className="card-header px-6 py-4 text-white rounded-t-lg">
         <i className="bi bi-award me-2"></i>Info Jurnal Sinta
       </div>
-      <div className="card-body">
+      <div className="p-6">
         {loading && (
-          <div id="sinta-loading" className="d-flex align-items-center">
-            <div className="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+          <div id="sinta-loading" className="flex items-center">
+            <div className="inline-block w-4 h-4 border-2 border-green-600 border-r-transparent rounded-full animate-spin me-2" role="status"></div>
             <span>Memuat info Sinta...</span>
           </div>
         )}
         
         {error && (
-          <div id="sinta-error" className="text-danger">{error}</div>
+          <div id="sinta-error" className="text-red-600">{error}</div>
         )}
         
         {sintaData && !loading && (
@@ -94,7 +104,7 @@ const SintaCard = ({ metadata }) => {
             <div className="mb-2">
               <strong>Website:</strong>
               {sintaData.website_url ? (
-                <a id="sinta-website" className="ms-1" href={sintaData.website_url} target="_blank" rel="noopener noreferrer">
+                <a id="sinta-website" className="ms-1 text-blue-600 hover:text-blue-800 underline" href={sintaData.website_url} target="_blank" rel="noopener noreferrer">
                   {sintaData.website_url}
                 </a>
               ) : (

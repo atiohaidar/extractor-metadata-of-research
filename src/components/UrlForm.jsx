@@ -22,7 +22,7 @@ const UrlForm = ({ onSubmit, isLoading }) => {
       <div className="mb-3">
         <input
           type="text"
-          className="form-control"
+          className="w-full px-3 py-3 border border-gray-200 rounded-md transition-all duration-200 ease-in-out focus:outline-none focus:border-green-600 focus:-translate-y-0.5 focus:shadow-lg focus:shadow-green-200/25 disabled:bg-gray-100 disabled:opacity-75"
           name="journal_url"
           id="journal_url"
           value={journalUrl}
@@ -32,12 +32,18 @@ const UrlForm = ({ onSubmit, isLoading }) => {
           disabled={isLoading}
         />
       </div>
-      <button type="submit" className="btn btn-primary" id="url-submit-btn" disabled={isLoading}>
+      <button 
+        type="submit" 
+        className="btn-primary inline-flex items-center justify-center px-6 py-3 font-semibold text-slate-800 border-0 transition-all duration-200 ease-in-out hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed rounded-md" 
+        disabled={isLoading}
+      >
         <span className="btn-text">Ekstrak Metadata</span>
-        {isLoading && <span className="spinner-border spinner-border-sm ms-2" role="status"></span>}
+        {isLoading && (
+          <span className="inline-block w-4 h-4 border-2 border-current border-r-transparent rounded-full animate-spin ms-2" role="status"></span>
+        )}
       </button>
       <div className="mt-3">
-        <small className="text-muted">
+        <small className="text-gray-500 text-sm">
           <i className="bi bi-info-circle"></i> Jika Anda mendapatkan error 403 Forbidden, kami akan mencoba mengambil konten dari Web Archive (Wayback Machine).
           Jika itu gagal, Anda bisa mencoba menggunakan opsi "Tempel HTML" di bawah ini.
         </small>

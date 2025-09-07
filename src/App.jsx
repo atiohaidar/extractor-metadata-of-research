@@ -8,6 +8,7 @@ import InputForm from './components/InputForm';
 import LoadingOverlay from './components/LoadingOverlay';
 import DragOverlay from './components/DragOverlay';
 import IntroOverlay from './components/IntroOverlay';
+import TipsNotification from './components/TipsNotification';
 
 import { useJournalExtractor } from './hooks/useJournalExtractor';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
@@ -31,27 +32,6 @@ function App() {
   // Handle paste events
   usePasteHandler(extractFromUrl, extractFromHtml);
 
-  // Show tips notification on first load
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!document.querySelector('.tips-notification')) {
-        const notification = document.createElement('div');
-        notification.className = 'alert alert-info alert-dismissible fade show tips-notification';
-        notification.innerHTML = `
-          <strong>Tips!</strong> Tekan Ctrl+V di mana saja pada halaman ini untuk menempelkan konten secara otomatis, atau <strong>seret dan lepas</strong> tautan langsung ke halaman. URL akan langsung diproses, HTML akan ditempatkan di tab HTML. 
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
-        `;
-        
-        const header = document.querySelector('h1');
-        if (header) {
-          header.insertAdjacentElement('afterend', notification);
-        }
-      }
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   const handleUrlSubmit = (url) => {
     extractFromUrl(url);
   };
@@ -64,6 +44,7 @@ function App() {
     <>
       <Layout>
         <Header />
+        <TipsNotification />
         
         <ErrorAlert error={error} onClose={clearError} />
         
