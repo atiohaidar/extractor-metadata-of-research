@@ -71,7 +71,22 @@ The application maintains the exact same visual design as the original HTML file
 - **Maintainability**: Modular structure for easy maintenance and testing
 - **Type safety**: JSDoc comments for better IDE support
 
-## 🔧 Development
+## � Deployment
+
+### GitHub Pages
+This application is automatically deployed to GitHub Pages using GitHub Actions.
+
+**Live Demo**: [https://atiohaidar.github.io/extractor-metadata-of-research/](https://atiohaidar.github.io/extractor-metadata-of-research/)
+
+#### Automatic Deployment
+- Push to `master` branch triggers automatic deployment
+- GitHub Actions workflow builds and deploys the app
+- Available at the GitHub Pages URL within minutes
+
+#### Manual Deployment
+You can also trigger deployment manually from the Actions tab in GitHub.
+
+### Local Development
 
 ### Prerequisites
 - Node.js (v16 or higher)
@@ -90,6 +105,11 @@ npm run dev
 ### Build for Production
 ```bash
 npm run build
+```
+
+### Build for GitHub Pages
+```bash
+npm run build:github
 ```
 
 ### Preview Production Build
