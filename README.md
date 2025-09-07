@@ -135,8 +135,7 @@ src/
 
 ### 🚀 Performance
 - **⚡ Loading Animations**: Feedback visual yang indah
-- **🔄 Real-time Updates**: Sinkronisasi data instant
-- **💨 Fast Loading**: Optimasi kecepatan maksimal
+-
 
 </td>
 </tr>
