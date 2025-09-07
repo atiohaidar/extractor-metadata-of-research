@@ -1,0 +1,19 @@
+// Component exports for easier imports
+export { default as Layout } from './Layout';
+export { default as Header } from './Header';
+export { default as GlowBlobs } from './GlowBlobs';
+export { default as ErrorAlert } from './ErrorAlert';
+export { default as WelcomeMessage } from './WelcomeMessage';
+export { default as InputForm } from './InputForm';
+export { default as UrlForm } from './UrlForm';
+export { default as HtmlForm } from './HtmlForm';
+export { default as ResultsContainer } from './ResultsContainer';
+export { default as MetadataTable } from './MetadataTable';
+export { default as AdditionalInfo } from './AdditionalInfo';
+export { default as SintaCard } from './SintaCard';
+export { default as ScimagoCard } from './ScimagoCard';
+export { default as JournalPreview } from './JournalPreview';
+export { default as LoadingOverlay } from './LoadingOverlay';
+export { default as DragOverlay } from './DragOverlay';
+export { default as IntroOverlay } from './IntroOverlay';
+export { default as CopyButton } from './CopyButton';
