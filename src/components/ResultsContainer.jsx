@@ -6,12 +6,16 @@ import AdditionalInfo from './AdditionalInfo';
 import JournalPreview from './JournalPreview';
 import InfoAlert from './InfoAlert';
 
-const ResultsContainer = ({ data }) => {
+const ResultsContainer = ({ data, aiIndexingData, onIndexingFound, onIndexingError }) => {
   const resultsRef = useRef(null);
   const [dismissedAlerts, setDismissedAlerts] = useState({
     citation: false,
     wayback: false
   });
+  const [localAiIndexingResult, setLocalAiIndexingResult] = useState(null);
+
+  // Combine external aiIndexingData with local state
+  const combinedAiIndexingData = aiIndexingData || localAiIndexingResult;
 
   // Auto-scroll to results when data is loaded (like original HTML)
   useEffect(() => {
@@ -40,6 +44,15 @@ const ResultsContainer = ({ data }) => {
     }));
   };
 
+  const handleIndexingFound = (result) => {
+    setLocalAiIndexingResult(result);
+  };
+
+  const handleIndexingError = (error) => {
+    console.error('AI Indexing Error:', error);
+    // You could add a toast notification here
+  };
+
   if (!data) return null;
 
   const { metadata, journal_url, html_content } = data;
@@ -51,19 +64,19 @@ const ResultsContainer = ({ data }) => {
     <div className="transition-opacity duration-300 ease-in-out" ref={resultsRef} id="results-container">
       {/* Citation Notice */}
       {showCitationNotice && (
-        <InfoAlert 
-          type="info" 
+        <InfoAlert
+          type="info"
           icon="bi bi-info-circle"
           onClose={() => handleDismissAlert('citation')}
         >
           <strong>Sumber Metadata:</strong> Metadata ini diekstrak dari meta tag citation karena metadata Dublin Core tidak tersedia.
         </InfoAlert>
       )}
-      
+
       {/* Wayback Notice */}
       {showWaybackNotice && (
-        <InfoAlert 
-          type="warning" 
+        <InfoAlert
+          type="warning"
           icon="bi bi-clock-history"
           onClose={() => handleDismissAlert('wayback')}
         >
@@ -73,17 +86,20 @@ const ResultsContainer = ({ data }) => {
           </a>
         </InfoAlert>
       )}
-      
+
       {/* Main Metadata Card */}
-      <MetadataTable metadata={metadata} />
-      
+      <MetadataTable
+        metadata={metadata}
+        onIndexingFound={handleIndexingFound}
+        onError={handleIndexingError}
+        aiIndexingData={combinedAiIndexingData}
+      />
+
       {/* Sinta Journal Info */}
-      <SintaCard metadata={metadata} />
-      
+      <SintaCard metadata={metadata} aiIndexingData={combinedAiIndexingData} />
+
       {/* SCImago Journal Info */}
-      <ScimagoCard metadata={metadata} />
-      
-      {/* Additional Metadata Card */}
+      <ScimagoCard metadata={metadata} aiIndexingData={combinedAiIndexingData} />      {/* Additional Metadata Card */}
       <AdditionalInfo metadata={metadata} />
 
       {/* Journal Preview Card */}

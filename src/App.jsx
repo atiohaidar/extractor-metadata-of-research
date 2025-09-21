@@ -21,9 +21,12 @@ function App() {
     loading,
     error,
     results,
+    aiIndexingData,
     extractFromUrl,
     extractFromHtml,
-    clearError
+    setIndexingData,
+    clearError,
+    clearResults
   } = useJournalExtractor();
 
   // Handle drag and drop
@@ -40,21 +43,35 @@ function App() {
     extractFromHtml(htmlContent, displayUrl);
   };
 
+  const handleIndexingFound = (indexingData) => {
+    setIndexingData(indexingData);
+  };
+
+  const handleIndexingError = (error) => {
+    console.error('AI Indexing error:', error);
+    // You can show a toast notification here if needed
+  };
+
   return (
     <>
       <Layout>
         <Header />
         <TipsNotification />
-        
+
         <ErrorAlert error={error} onClose={clearError} />
-        
+
         {results ? (
-          <ResultsContainer data={results} />
+          <ResultsContainer
+            data={results}
+            aiIndexingData={aiIndexingData}
+            onIndexingFound={handleIndexingFound}
+            onIndexingError={handleIndexingError}
+          />
         ) : (
           <WelcomeMessage />
         )}
-        
-        <InputForm 
+
+        <InputForm
           onUrlSubmit={handleUrlSubmit}
           onHtmlSubmit={handleHtmlSubmit}
           isLoading={loading}

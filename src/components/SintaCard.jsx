@@ -3,11 +3,12 @@ import { fetchSintaInfo } from '../services/api';
 import { extractSintaIdFromUrl } from '../utils/helpers';
 import { extractPublicationYears, isYearMatching } from '../utils/yearUtils';
 
-const SintaCard = ({ metadata }) => {
+const SintaCard = ({ metadata, aiIndexingData }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [sintaData, setSintaData] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [aiSintaUrl, setAiSintaUrl] = useState(null);
 
   useEffect(() => {
     // Reset state when metadata changes
@@ -15,8 +16,35 @@ const SintaCard = ({ metadata }) => {
     setLoading(false);
     setError(null);
     setSintaData(null);
+    setAiSintaUrl(null);
 
     const loadSintaInfo = async () => {
+      // First, try to use AI indexing data if available
+      if (aiIndexingData?.sinta) {
+        setVisible(true);
+        setAiSintaUrl(aiIndexingData.sinta);
+
+        // Extract Sinta ID from AI-provided URL and fetch detailed info
+        const sintaId = extractSintaIdFromUrl(aiIndexingData.sinta);
+        if (sintaId) {
+          setLoading(true);
+          try {
+            const data = await fetchSintaInfo(sintaId);
+            setSintaData(data);
+          } catch (err) {
+            if (err.message.includes('HTTP 404')) {
+              setError(`ID Sinta ${sintaId} tidak ditemukan`);
+            } else {
+              setError(`Failed to load Sinta info: ${err.message}`);
+            }
+          } finally {
+            setLoading(false);
+          }
+        }
+        return;
+      }
+
+      // Fallback to original metadata extraction
       if (!metadata || !metadata.sinta_link || !metadata.sinta_link.url) return;
 
       const sintaId = extractSintaIdFromUrl(metadata.sinta_link.url);
@@ -37,7 +65,7 @@ const SintaCard = ({ metadata }) => {
     };
 
     loadSintaInfo();
-  }, [metadata]);
+  }, [metadata, aiIndexingData]);
 
   if (!visible) return null;
 
@@ -47,7 +75,7 @@ const SintaCard = ({ metadata }) => {
     }
 
     const hist = sintaData.accreditation_history;
-    const years = Object.keys(hist).filter(y => /^(\d{4})$/.test(y)).sort((a,b) => b.localeCompare(a));
+    const years = Object.keys(hist).filter(y => /^(\d{4})$/.test(y)).sort((a, b) => b.localeCompare(a));
     const pubYears = extractPublicationYears(metadata);
 
     if (years.length === 0) {
@@ -60,15 +88,14 @@ const SintaCard = ({ metadata }) => {
           const levelRaw = String(hist[year] || '').trim();
           const level = levelRaw.toUpperCase();
           const matched = isYearMatching(year, pubYears);
-          
+
           return (
-            <span 
-              key={year} 
-              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full me-2 mb-2 ${
-                matched 
-                  ? 'bg-green-100 text-green-800' 
+            <span
+              key={year}
+              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full me-2 mb-2 ${matched
+                  ? 'bg-green-100 text-green-800'
                   : 'bg-gray-100 text-gray-800'
-              }`}
+                }`}
             >
               {year}: {level}
             </span>
@@ -90,11 +117,11 @@ const SintaCard = ({ metadata }) => {
             <span>Memuat info Sinta...</span>
           </div>
         )}
-        
+
         {error && (
           <div id="sinta-error" className="text-red-600">{error}</div>
         )}
-        
+
         {sintaData && !loading && (
           <div id="sinta-content">
             <div className="mb-2">
@@ -111,6 +138,14 @@ const SintaCard = ({ metadata }) => {
                 <span id="sinta-website" className="ms-1">-</span>
               )}
             </div>
+            {aiSintaUrl && (
+              <div className="mb-2">
+                <strong>Link Sinta (AI Detected):</strong>
+                <a id="ai-sinta-link" className="ms-1 text-purple-600 hover:text-purple-800 underline" href={aiSintaUrl} target="_blank" rel="noopener noreferrer">
+                  {aiSintaUrl}
+                </a>
+              </div>
+            )}
             <div className="mb-2">
               <strong>Riwayat Akreditasi:</strong>
               <div id="sinta-accreditation-history" className="mt-1">

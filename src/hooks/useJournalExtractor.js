@@ -6,16 +6,27 @@ export const useJournalExtractor = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [results, setResults] = useState(null);
+  const [aiIndexingData, setAiIndexingData] = useState(null);
 
   const clearError = useCallback(() => {
     setError(null);
+  }, []);
+
+  const clearResults = useCallback(() => {
+    setResults(null);
+    setAiIndexingData(null);
+  }, []);
+
+  const setIndexingData = useCallback((data) => {
+    setAiIndexingData(data);
   }, []);
 
   const extractFromUrl = useCallback(async (url) => {
     setLoading(true);
     setError(null);
     setResults(null); // Clear previous results immediately
-    
+    setAiIndexingData(null); // Clear AI indexing data
+
     try {
       const normalizedUrl = normalizeUrl(url);
       const data = await extractMetadata('url', { journal_url: normalizedUrl });
@@ -32,11 +43,12 @@ export const useJournalExtractor = () => {
     setLoading(true);
     setError(null);
     setResults(null); // Clear previous results immediately
-    
+    setAiIndexingData(null); // Clear AI indexing data
+
     try {
-      const data = await extractMetadata('html', { 
+      const data = await extractMetadata('html', {
         html_content: htmlContent,
-        display_url: displayUrl 
+        display_url: displayUrl
       });
       setResults(data);
     } catch (err) {
@@ -51,8 +63,11 @@ export const useJournalExtractor = () => {
     loading,
     error,
     results,
+    aiIndexingData,
     extractFromUrl,
     extractFromHtml,
-    clearError
+    setIndexingData,
+    clearError,
+    clearResults
   };
 };

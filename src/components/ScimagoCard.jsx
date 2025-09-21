@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { fetchScimagoInfo } from '../services/api';
 import { extractPublicationYears, isYearMatching } from '../utils/yearUtils';
 
-const ScimagoCard = ({ metadata }) => {
+const ScimagoCard = ({ metadata, aiIndexingData }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [scimagoData, setScimagoData] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [aiScimagoUrl, setAiScimagoUrl] = useState(null);
 
   useEffect(() => {
     // Reset state when metadata changes
@@ -14,8 +15,32 @@ const ScimagoCard = ({ metadata }) => {
     setLoading(false);
     setError(null);
     setScimagoData(null);
+    setAiScimagoUrl(null);
 
     const loadScimagoInfo = async () => {
+      // First, try to use AI indexing data if available
+      if (aiIndexingData?.scimago) {
+        setVisible(true);
+        setAiScimagoUrl(aiIndexingData.scimago);
+
+        // Fetch detailed info from AI-provided URL
+        setLoading(true);
+        try {
+          const data = await fetchScimagoInfo(aiIndexingData.scimago);
+          setScimagoData(data);
+        } catch (err) {
+          if (err.message.includes('HTTP 404') || err.message.includes('Data SCImago tidak ditemukan')) {
+            setError(`URL Scimago tidak ditemukan atau tidak valid`);
+          } else {
+            setError(`Gagal memuat info SCImago: ${err.message}`);
+          }
+        } finally {
+          setLoading(false);
+        }
+        return;
+      }
+
+      // Fallback to original metadata extraction
       if (!metadata || !metadata.scimago_info || !metadata.scimago_info.url) return;
 
       setVisible(true);
@@ -26,14 +51,18 @@ const ScimagoCard = ({ metadata }) => {
         const data = await fetchScimagoInfo(metadata.scimago_info.url);
         setScimagoData(data);
       } catch (err) {
-        setError(`Gagal memuat info SCImago: ${err.message}`);
+        if (err.message.includes('HTTP 404') || err.message.includes('Data SCImago tidak ditemukan')) {
+          setError(`URL Scimago tidak ditemukan atau tidak valid`);
+        } else {
+          setError(`Gagal memuat info SCImago: ${err.message}`);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     loadScimagoInfo();
-  }, [metadata]);
+  }, [metadata, aiIndexingData]);
 
   if (!visible) return null;
 
@@ -55,12 +84,11 @@ const ScimagoCard = ({ metadata }) => {
       <div>
         {years.map(year => {
           const highlight = isYearMatching(year, pubYears);
-          
+
           return (
             <div key={year} className="mb-1">
-              <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full me-2 ${
-                highlight ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-              }`}>
+              <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full me-2 ${highlight ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
                 {year}
               </span>
               {byYear[year].map((q, index) => (
@@ -87,19 +115,19 @@ const ScimagoCard = ({ metadata }) => {
             <span>Memuat info SCImago...</span>
           </div>
         )}
-        
+
         {error && (
           <div id="scimago-error" className="text-red-600">{error}</div>
         )}
-        
+
         {scimagoData && !loading && (
           <div id="scimago-content">
             <div className="mb-2 flex items-center">
               {metadata.scimago_info?.img && (
-                <img 
+                <img
                   id="scimago-img"
-                  src={metadata.scimago_info.img} 
-                  alt="SCImago Logo" 
+                  src={metadata.scimago_info.img}
+                  alt="SCImago Logo"
                   style={{ height: '40px', width: 'auto', maxWidth: '80px' }}
                   className="me-3"
                 />
@@ -118,6 +146,14 @@ const ScimagoCard = ({ metadata }) => {
                 )}
               </div>
             </div>
+            {aiScimagoUrl && (
+              <div className="mb-2">
+                <strong>Link SCImago (AI Detected):</strong>
+                <a id="ai-scimago-link" className="ms-1 text-purple-600 hover:text-purple-800 underline" href={aiScimagoUrl} target="_blank" rel="noopener noreferrer">
+                  {aiScimagoUrl}
+                </a>
+              </div>
+            )}
             <div className="mb-2">
               <strong>Quartile per Tahun:</strong>
               <div id="scimago-quartiles" className="mt-2">

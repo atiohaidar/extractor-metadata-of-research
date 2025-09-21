@@ -3,7 +3,12 @@
 # 📊 Ekstraksi Metadat## 📁 Struktur Proyek
 
 <details>
-<summary><strong>🔍 Klik untuk melihat struktur lengkap</strong></summary>
+<summary><strong>🔍 Klik untuk melihat struktur ### 🎨 Antarmuka Pengguna
+- ✅ **Drag & Drop** - Drop URL ke halaman
+- ✅ **Paste Global** - Paste URL/HTML di mana saja
+- ✅ **Loading Animation** - Animasi loading yang indah
+- ✅ **Responsive Design** - Bekerja di semua perangkat
+- ✅ **AI Journal Search** - Cari indexing jurnal menggunakan AIap</strong></summary>
 
 ```
 src/
@@ -166,6 +171,7 @@ src/
 │   ├── ⏳ LoadingOverlay.jsx   # → Overlay animasi loading
 │   ├── 🖱️ DragOverlay.jsx      # → Overlay drag and drop
 │   ├── 🎊 IntroOverlay.jsx     # → Animasi intro welcome
+│   ├── 🤖 AISearchButton.jsx   # → Tombol pencarian AI indexing
 │   └── 📤 index.js            # → Ekspor komponen
 ├── 🎣 hooks/                   # Custom React hooks
 │   ├── 🔄 useJournalExtractor.js # → Logika fetching data utama
@@ -173,7 +179,7 @@ src/
 │   ├── 📋 usePasteHandler.js    # → Handling paste global
 │   └── 📤 index.js             # → Ekspor hook
 ├── 🌐 services/                # API dan layanan eksternal
-│   └── 🔌 api.js              # → API calls dan fetching data
+│   └── 🔌 api.js              # → API calls, fetching data, AI search
 ├── 🛠️ utils/                   # Fungsi utilitas dan konstanta
 │   ├── 📋 constants.js        # → Konstanta aplikasi
 │   ├── 🔧 helpers.js          # → Fungsi helper
@@ -344,6 +350,7 @@ npm run dev
 <details>
 <summary><strong>🚀 Fitur Tersembunyi</strong></summary>
 
+- **🤖 AI Journal Search**: Klik tombol "Cari Indexing AI" untuk mencari apakah jurnal terindeks di Sinta/SCImago
 - **Global Paste**: Tekan `Ctrl+V` di mana saja untuk paste URL/HTML
 - **Drag Multiple URLs**: Drag beberapa URL sekaligus (dipisah baris baru)  
 - **Copy Results**: Gunakan tombol copy di setiap hasil untuk clipboard
@@ -357,6 +364,7 @@ npm run dev
 
 | API | Fungsi | Status |
 |-----|--------|--------|
+| 🤖 **AI Journal Search** | [`deteksi-index-jurnal-nasional-internasional.atiohaidar.workers.dev`](https://deteksi-index-jurnal-nasional-internasional.atiohaidar.workers.dev) | ✅ Aktif |
 | 🌐 **Ekstraksi Utama** | [`api-ekstrak-web-jurnal.atiohaidar.workers.dev`](https://api-ekstrak-web-jurnal.atiohaidar.workers.dev) | ✅ Aktif |
 | 🇮🇩 **Sinta Database** | [`sinta-journal-api-production.atiohaidar.workers.dev`](https://sinta-journal-api-production.atiohaidar.workers.dev) | ✅ Aktif |
 | 🌍 **SCImago API** | [`scrape.scimago.workers.dev`](https://scrape.scimago.workers.dev) | ✅ Aktif |
