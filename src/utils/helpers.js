@@ -11,7 +11,7 @@ export const copyToClipboard = async (text) => {
       return await navigator.clipboard.writeText(text);
     }
   } catch (_) { /* ignore */ }
-  
+
   return new Promise((resolve, reject) => {
     try {
       const ta = document.createElement('textarea');
@@ -24,8 +24,8 @@ export const copyToClipboard = async (text) => {
       const ok = document.execCommand('copy');
       document.body.removeChild(ta);
       ok ? resolve() : reject(new Error('Copy failed'));
-    } catch (e) { 
-      reject(e); 
+    } catch (e) {
+      reject(e);
     }
   });
 };
@@ -57,8 +57,20 @@ export const isValidUrl = (string) => {
 };
 
 export const normalizeUrl = (url) => {
-  if (url.startsWith('http://')) {
-    return 'https://' + url.slice(7);
+  let normalizedUrl = url;
+
+  // Convert http to https
+  if (normalizedUrl.startsWith('http://')) {
+    normalizedUrl = 'https://' + normalizedUrl.slice(7);
   }
-  return url;
+
+  // Remove trailing galley ID from OJS article URLs
+  // Pattern: /article/view/{article_id}/{galley_id} -> /article/view/{article_id}
+  // This ensures we get the article metadata page, not the PDF/galley view
+  const ojsGalleyPattern = /(\/article\/view\/\d+)\/\d+\/?$/i;
+  if (ojsGalleyPattern.test(normalizedUrl)) {
+    normalizedUrl = normalizedUrl.replace(ojsGalleyPattern, '$1');
+  }
+
+  return normalizedUrl;
 };

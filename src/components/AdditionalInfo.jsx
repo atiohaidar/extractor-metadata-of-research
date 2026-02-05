@@ -7,8 +7,14 @@ const AdditionalInfo = ({ metadata }) => {
     { key: 'doi', label: 'DOI' },
     { key: 'issn', label: 'ISSN' },
     { key: 'volume', label: 'Volume' },
+    { key: 'volume_issue', label: 'Volume/Issue' },
+    { key: 'issue', label: 'Issue' },
+    { key: 'section', label: 'Section' },
     { key: 'keywords', label: 'Keywords' },
     { key: 'language', label: 'Language' },
+    { key: 'date_published', label: 'Published', isDate: true },
+    { key: 'date_received', label: 'Received', isDate: true },
+    { key: 'date_accepted', label: 'Accepted', isDate: true },
     { key: 'pdf_url', label: 'PDF', isPDF: true }
   ];
 
@@ -17,15 +23,15 @@ const AdditionalInfo = ({ metadata }) => {
       if (field.key === 'uri') {
         return (
           <div className="flex items-center flex-wrap">
-            <a 
-              href={value} 
-              target="_blank" 
+            <a
+              href={value}
+              target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-blue-800 underline me-2"
             >
               {value}
             </a>
-            <CopyButton 
+            <CopyButton
               text={value}
               buttonId="uri"
               className="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 transition-colors duration-200"
@@ -47,6 +53,29 @@ const AdditionalInfo = ({ metadata }) => {
           View PDF
         </a>
       );
+    } else if (field.isDate) {
+      // Format date with Indonesian locale
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) {
+        const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const monthNames = [
+          'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        const dayName = dayNames[date.getDay()];
+        const day = date.getDate();
+        const monthName = monthNames[date.getMonth()];
+        const year = date.getFullYear();
+        return (
+          <span>
+            <span className="font-medium">{value}</span>
+            <span className="text-sm text-gray-500 ms-2">
+              ({dayName}, {day} {monthName} {year})
+            </span>
+          </span>
+        );
+      }
+      return value;
     } else {
       return value;
     }
@@ -101,7 +130,7 @@ const AdditionalInfo = ({ metadata }) => {
           }
           return null;
         })}
-        
+
         {renderPages()}
         {renderAbstract('English Abstract', metadata.description_en)}
         {renderAbstract('Indonesian Abstract', metadata.description_id)}

@@ -7,17 +7,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        'bg': '#f7f9fc',
-        'surface': '#ffffff',
-        'text': '#0e1726',
-        'muted': '#5b6b8c',
-        'primary': 'rgba(0, 230, 119, 0.64)', /* neon green */
-        'primary-600': '#00c853', /* deeper neon green */
-        'accent': 'rgba(185, 242, 105, 0.59)', /* lime accent */
-        'glow': 'rgba(0, 200, 83, 0.45)',
-        'glow-strong': 'rgba(0, 230, 118, 0.7)',
+        'bg': '#fdf8e8', /* cream paper color */
+        'surface': '#fffef5', /* off-white paper */
+        'text': '#1a1a2e', /* dark blue-black ink */
+        'muted': '#4a5568', /* gray muted text */
+        'primary': '#2563eb', /* blue pen color */
+        'primary-600': '#1d4ed8', /* deeper blue */
+        'accent': '#dc2626', /* red margin/correction */
+        'glow': 'rgba(37, 99, 235, 0.25)',
+        'glow-strong': 'rgba(37, 99, 235, 0.4)',
+        'notebook-line': '#a8d4f0', /* light blue ruled lines */
+        'notebook-margin': '#e86b6b', /* red margin line */
+        'paper-shadow': 'rgba(139, 69, 19, 0.15)', /* brown shadow */
       },
       fontFamily: {
+        'handwriting': ['"Patrick Hand"', '"Caveat"', 'cursive'],
         'sora': ['Sora', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
         'poppins': ['Poppins', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
       },

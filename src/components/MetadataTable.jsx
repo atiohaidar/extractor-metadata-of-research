@@ -6,6 +6,42 @@ import { generateSearchUrl, escapeHtml } from '../utils/yearUtils';
 const MetadataTable = ({ metadata, onIndexingFound, onError, aiIndexingData }) => {
   if (!metadata) return null;
 
+  // Helper function to format date with full Indonesian details
+  const formatDateWithDetails = (dateString) => {
+    if (!dateString) return '';
+
+    // Try to parse the date
+    const date = new Date(dateString);
+
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return dateString; // Return original string if parsing fails
+    }
+
+    // Indonesian day names
+    const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+    // Indonesian month names
+    const monthNames = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+
+    const dayName = dayNames[date.getDay()];
+    const day = date.getDate();
+    const monthName = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+
+    return (
+      <div className="flex flex-col">
+        <span className="font-medium">{dateString}</span>
+        <span className="text-sm text-gray-500 mt-1">
+          ({dayName}, {day} {monthName} {year})
+        </span>
+      </div>
+    );
+  };
+
   const priorityFields = [
     { key: 'title', label: 'Title' },
     { key: 'authors', label: 'Authors', isArray: true },
@@ -165,7 +201,7 @@ const MetadataTable = ({ metadata, onIndexingFound, onError, aiIndexingData }) =
                   return (
                     <tr key={key} className="transition-all duration-300 ease-in-out table-row-hover">
                       <th scope="row" className="p-3 text-left font-medium text-gray-900 bg-gray-50 align-top w-1/5">{dateLabel} Date</th>
-                      <td className="p-3 align-top">{metadata[key]}</td>
+                      <td className="p-3 align-top">{formatDateWithDetails(metadata[key])}</td>
                     </tr>
                   );
                 }

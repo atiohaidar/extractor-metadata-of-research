@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import MetadataTable from './MetadataTable';
 import SintaCard from './SintaCard';
 import ScimagoCard from './ScimagoCard';
 import AdditionalInfo from './AdditionalInfo';
 import JournalPreview from './JournalPreview';
 import InfoAlert from './InfoAlert';
+import { parseOjsHtml, mergeOjsMetadata } from '../utils/ojsParser';
 
 const ResultsContainer = ({ data, aiIndexingData, onIndexingFound, onIndexingError }) => {
   const resultsRef = useRef(null);
@@ -16,6 +17,19 @@ const ResultsContainer = ({ data, aiIndexingData, onIndexingFound, onIndexingErr
 
   // Combine external aiIndexingData with local state
   const combinedAiIndexingData = aiIndexingData || localAiIndexingResult;
+
+  // Parse OJS HTML and merge with existing metadata
+  const enhancedMetadata = useMemo(() => {
+    if (!data?.metadata || !data?.html_content) {
+      return data?.metadata || null;
+    }
+
+    // Parse OJS-specific HTML patterns
+    const ojsData = parseOjsHtml(data.html_content);
+
+    // Merge with existing metadata (OJS data fills in gaps)
+    return mergeOjsMetadata(data.metadata, ojsData);
+  }, [data?.metadata, data?.html_content]);
 
   // Auto-scroll to results when data is loaded (like original HTML)
   useEffect(() => {
@@ -55,10 +69,12 @@ const ResultsContainer = ({ data, aiIndexingData, onIndexingFound, onIndexingErr
 
   if (!data) return null;
 
-  const { metadata, journal_url, html_content } = data;
+  const { journal_url, html_content } = data;
+  // Use enhanced metadata instead of original
+  const metadata = enhancedMetadata;
 
-  const showCitationNotice = metadata.metadata_source === 'citation' && !dismissedAlerts.citation;
-  const showWaybackNotice = metadata.wayback_url && !dismissedAlerts.wayback;
+  const showCitationNotice = metadata?.metadata_source === 'citation' && !dismissedAlerts.citation;
+  const showWaybackNotice = metadata?.wayback_url && !dismissedAlerts.wayback;
 
   return (
     <div className="transition-opacity duration-300 ease-in-out" ref={resultsRef} id="results-container">
@@ -94,6 +110,8 @@ const ResultsContainer = ({ data, aiIndexingData, onIndexingFound, onIndexingErr
         onError={handleIndexingError}
         aiIndexingData={combinedAiIndexingData}
       />
+      {/* Journal Preview Card */}
+      <JournalPreview journalUrl={journal_url} htmlContent={html_content} />
 
       {/* Sinta Journal Info */}
       <SintaCard metadata={metadata} aiIndexingData={combinedAiIndexingData} />
@@ -102,8 +120,7 @@ const ResultsContainer = ({ data, aiIndexingData, onIndexingFound, onIndexingErr
       <ScimagoCard metadata={metadata} aiIndexingData={combinedAiIndexingData} />      {/* Additional Metadata Card */}
       <AdditionalInfo metadata={metadata} />
 
-      {/* Journal Preview Card */}
-      <JournalPreview journalUrl={journal_url} htmlContent={html_content} />
+
     </div>
   );
 };
