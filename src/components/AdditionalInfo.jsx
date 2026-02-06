@@ -134,6 +134,22 @@ const AdditionalInfo = ({ metadata }) => {
         {renderPages()}
         {renderAbstract('English Abstract', metadata.description_en)}
         {renderAbstract('Indonesian Abstract', metadata.description_id)}
+
+        {/* How to Cite section */}
+        {metadata.how_to_cite && (
+          <div className="mb-4 mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h5 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+              <i className="bi bi-quote me-2"></i>How to Cite
+            </h5>
+            <p className="text-gray-700 leading-relaxed italic">{metadata.how_to_cite}</p>
+            <CopyButton
+              text={metadata.how_to_cite}
+              buttonId="how-to-cite"
+              className="mt-2 inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-100 transition-colors duration-200"
+              ariaLabel="Salin sitasi"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -31,16 +31,6 @@ const ResultsContainer = ({ data, aiIndexingData, onIndexingFound, onIndexingErr
     return mergeOjsMetadata(data.metadata, ojsData);
   }, [data?.metadata, data?.html_content]);
 
-  // Auto-scroll to results when data is loaded (like original HTML)
-  useEffect(() => {
-    if (data && resultsRef.current) {
-      // Small delay to ensure rendering is complete
-      setTimeout(() => {
-        resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  }, [data]);
-
   // Reset dismissed alerts when new data loads
   useEffect(() => {
     if (data) {
@@ -111,7 +101,11 @@ const ResultsContainer = ({ data, aiIndexingData, onIndexingFound, onIndexingErr
         aiIndexingData={combinedAiIndexingData}
       />
       {/* Journal Preview Card */}
-      <JournalPreview journalUrl={journal_url} htmlContent={html_content} />
+      <JournalPreview
+        journalUrl={journal_url}
+        htmlContent={html_content}
+        hasDate={!!(metadata?.date_published || metadata?.date_received || metadata?.date_accepted)}
+      />
 
       {/* Sinta Journal Info */}
       <SintaCard metadata={metadata} aiIndexingData={combinedAiIndexingData} />
