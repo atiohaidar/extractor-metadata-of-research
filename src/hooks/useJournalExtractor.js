@@ -27,13 +27,19 @@ export const useJournalExtractor = () => {
     setResults(null); // Clear previous results immediately
     setAiIndexingData(null); // Clear AI indexing data
 
+    const normalizedUrl = normalizeUrl(url);
+
     try {
-      const normalizedUrl = normalizeUrl(url);
       const data = await extractMetadata('url', { journal_url: normalizedUrl });
       setResults(data);
     } catch (err) {
       setError(err.message);
       setResults(null);
+
+      // Auto-open URL in new tab on actual extraction error
+      if (normalizedUrl && normalizedUrl.startsWith('http')) {
+        window.open(normalizedUrl, '_blank');
+      }
     } finally {
       setLoading(false);
     }
@@ -54,6 +60,11 @@ export const useJournalExtractor = () => {
     } catch (err) {
       setError(err.message);
       setResults(null);
+
+      // Auto-open display URL in new tab on error if available
+      if (displayUrl && displayUrl.startsWith('http')) {
+        window.open(displayUrl, '_blank');
+      }
     } finally {
       setLoading(false);
     }
